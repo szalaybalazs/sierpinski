@@ -1,14 +1,15 @@
 var canvas, ctx;
 var interval = null,
-    timesToRun = 4,
+    timesToRun = 7,
     x = 1;
 var toSplitTemp = [],
     toDraw = [],
     toSplit = []; 
-var topCol = '#ff0000',
-    rightCol = '#00ff00',
+var topCol = '#cc0000',
+    rightCol = '#00cc00',
     leftCol = '#0000ff';
 var colFil = true;
+var duration = 1;
 
 function triangle() {
     this.a = [0, 0];
@@ -39,11 +40,11 @@ window.onload = function(){
 
 function start(){    
     firstTri();    
-    interval = setInterval(draw, 500);    
+    interval = setInterval(draw, duration / timesToRun * 1000);    
 }
 
 function draw(){
-    drawBlock(0,0, canvas.width,canvas.height,'black'); 
+    drawBlock(0,0, canvas.width,canvas.height,'#f4f4f4'); 
     
     for(var i = 0; i < toDraw.length; i++){  
         ctx.beginPath();
@@ -54,6 +55,7 @@ function draw(){
         
         if (colFil){
             ctx.fillStyle = toDraw[i].color; 
+
             ctx.fill(); 
         }else{
             ctx.lineWidth = 1;
@@ -117,14 +119,15 @@ function drawBlock(x,y, width,height, colour){
 //dat.gui
 var GUIControls = function() {
     this.Iteráció = timesToRun;
-    this.Kitöltés = true;
-    this.Felső = '#ff0000';
-    this.Jobb = '#00ff00';
-    this.Bal = '#0000ff';
+    this['Időtartam'] = duration;
+    this.Kitöltés = colFil;
+    this.Felső = topCol;
+    this.Jobb = rightCol;
+    this.Bal = leftCol;
     
     this['RAJZOLD!'] = function(){
 				clearInterval(interval);
-        drawBlock(0,0, canvas.width,canvas.height,'black'); 
+        drawBlock(0,0, canvas.width,canvas.height, '#f4f4f4'); 
         interval = null;
         timesToRun = this.Iteráció;
         toDraw = [];
@@ -135,6 +138,7 @@ var GUIControls = function() {
         rightCol = this.Jobb;
         leftCol = this.Bal;
         colFil = this.Kitöltés; 
+        duration = this['Időtartam'];
         start();
     };
 };
@@ -143,6 +147,7 @@ function loadGui(){
     var item = new GUIControls();
     var gui = new dat.GUI();
     gui.add(item, 'Iteráció', 1, 20).step(1);
+    gui.add(item, 'Időtartam', 0, 1000).step(.1);
     gui.add(item, 'Kitöltés');
 		gui.addColor(item, 'Felső');
     gui.addColor(item, 'Jobb');
